@@ -109,7 +109,7 @@ console.log(convertToRoman(36));
 
 - Some problems with this code.
 - first of all, in the `if` statement in the `for` loop, if the remainder is a `number` greater than 0 will always return true because the boolean value `number` will evaluate to `NaN`. So this statement does not work.
-- I could change the statement so that it looks for the first number that is less than `num` 
+- I could change the statement so that it looks for the first number that is less than `num`
   - `if (num >= arabicIndex[i])`
 - Also, `push` will return the result in reverse order. Use `unshift`
 - `return rem.join("")` will end up returning a string, which will cause problems for `unshift`, which is an array method.
@@ -178,3 +178,96 @@ function convertToRoman(num) {
   return "";
 }
 ```
+
+## Caesar's Cipher
+
+- Write a function which takes ROT13 encoded string as input and returns a decoded string
+
+- I came up with something without too much thought.
+
+```js
+function rot13(str) {
+  let result = "";
+  let alphaStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  
+  for (let i = 0; i < str.length; i++) {
+    for (let j = 0; j < alphaStr.length; j++) {
+      if (str[i] === alphaStr[j]) {
+        if (j < 13) {
+          result = result.concat(alphaStr[j + 13]);
+          break;
+        } else if (j > 12) {
+          result = result.concat(alphaStr[j - 13]);
+          break;
+        }
+      }
+    }
+  }
+  return result;
+}
+```
+
+- The logic is there, but I didn't account for non-alphabetic characters.
+- Maybe I need to use regex.
+- Also, it doesn't iterate to the end of the `str`.
+
+So I tried the following
+
+```js
+function rot13(str) {
+  let result = "";
+  let alphaStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  for (let i = 0; i < str.length; i++) {
+    for (let j = 0; j < alphaStr.length; j++) {
+      if (str[i] !== (/[A-Z]+/g)) {
+        result = result.concat(str[i]);
+        break;
+      } else if (str[i] === alphaStr[j]) {
+        if (j < 13) {
+          result = result.concat(alphaStr[j+13]);
+          break;
+        } else if (j > 12) {
+          result = result.concat(alphaStr[j-13]);
+        }
+        console.log(result)
+      }
+    }
+  }
+  return result;
+}
+
+console.log(rot13("SERR PBQR PNZC"));
+```
+
+- But there seems to be something wrong with the `if` statement comparing the string element to a regex.
+  - Probably not a valid comparison statement
+- I could check if the string element is not a part of the `alphaStr`, and if not, concat to the result string as it is.
+  - Use `.test()` method
+  - `if (!(/[A-Z]/).test(str[i]))`
+
+```js
+function rot13(str) {
+  let result = "";
+  let alphaStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  for (let i = 0; i < str.length; i++) {
+    for (let j = 0; j < alphaStr.length; j++) {
+      if (!(/[A-Z]/).test(str[i])) {
+        result = result.concat(str[i]);
+        break;
+      } else if (str[i] === alphaStr[j]) {
+        if (j < 13) {
+          result = result.concat(alphaStr[j+13]);
+          break;
+        } else if (j > 12) {
+          result = result.concat(alphaStr[j-13]);
+        }
+      }
+    }
+  }
+  return result;
+}
+```
+
+- code passes. But it looks a bit bloated and inefficient.
+- Might try some other solutions using `.charAt` and `replace`
