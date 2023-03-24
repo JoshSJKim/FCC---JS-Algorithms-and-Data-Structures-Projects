@@ -271,3 +271,31 @@ function rot13(str) {
 
 - code passes. But it looks a bit bloated and inefficient.
 - Might try some other solutions using `.charAt` and `replace`
+
+- meanwhile, I can slim down the above code a bit
+
+```js
+function rot13(str) {
+  let result = "";
+  let alphaStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  for (let i = 0l i < str.length; i++) {
+    for (let j = 0; j < alphaStr.length; j++) {
+      if (!(/[A-Z]/).test(str[i])) {
+        result += str[i];
+        break;
+      } else if (str[i] === alphaStr[j]) {
+        if (j < 13) {
+          result += alphaStr[j+13];
+          break;
+        } else {
+          result += alphaStr[j-13];
+        }
+      }
+    }
+  }
+  return result;
+}
+```
+
+- I might try a `forEach()` solution.
