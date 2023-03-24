@@ -299,3 +299,15 @@ function rot13(str) {
 ```
 
 - I might try a `forEach()` solution.
+
+## Telephone Number Validator
+
+- Create a function that validates North American phone number format
+- It must contain 10 digits including three digit area code.
+- It can contain 11 digits including country code, which must be 1
+  - country code must be single digit
+- It may or may not contain hyphens between block sets.
+- It may or may not contain parentheses to envelope the the area code, exclusively
+- It must start with a number
+- If using spaces or hyphens, it must follow 1-3-3-4 pattern
+- It cannot contain any special characters aside from opening and closing parentheses for the area code and hyphens to separate the pattern specified above.
