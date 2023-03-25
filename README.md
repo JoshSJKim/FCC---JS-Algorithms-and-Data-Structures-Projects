@@ -311,3 +311,18 @@ function rot13(str) {
 - It must start with a number
 - If using spaces or hyphens, it must follow 1-3-3-4 pattern
 - It cannot contain any special characters aside from opening and closing parentheses for the area code and hyphens to separate the pattern specified above.
+
+- I think regex is the way to go, but it's going to be a lengthy one.
+
+```js
+function telephoneCheck(str) {
+  if ((/^1?[-\s]?\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{4}$/).test(str)) {
+    return true;
+  }
+  return false;
+}
+```
+
+- This code almost passes, but there is a problem.
+- I have to ensure that if there is an opening parenthesis for the area code, there must be a closing parenthesis, and vice versa.
+- The above code leaves the opening and closing parentheses independently optional, which will cause errors.
