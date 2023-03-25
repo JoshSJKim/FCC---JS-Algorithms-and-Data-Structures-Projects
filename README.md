@@ -326,3 +326,19 @@ function telephoneCheck(str) {
 - This code almost passes, but there is a problem.
 - I have to ensure that if there is an opening parenthesis for the area code, there must be a closing parenthesis, and vice versa.
 - The above code leaves the opening and closing parentheses independently optional, which will cause errors.
+
+```js
+function telephoneCheck(str) {
+  if ((/^((1?[-\s]?\d{3}\)[-\s]?\d{3}[-\s]?\d{4})|(1?[-\s]?\d{3}[-\s]?\d{3}[-\s]?\{4}))$/).test(str)) {
+    return true;
+  }
+  return false;
+}
+```
+
+- This code works, but I am not too proud of it.
+- It just looks unnecessarily long.
+- There must be another way to keep it simpler.
+- I've tried using positive lookahead `(?=\(\d{3}\))` and negative `(?!\d{3}\))` as a means to ensure that if there is an opening parenthesis, it must be followed by a closing parenthesis, or if it does not have an opening parenthesis, it must not have a closing parenthesis.
+- I'm still not familiar with lookaheads.
+- I will be coming back to this problem again later.
