@@ -342,3 +342,19 @@ function telephoneCheck(str) {
 - I've tried using positive lookahead `(?=\(\d{3}\))` and negative `(?!\d{3}\))` as a means to ensure that if there is an opening parenthesis, it must be followed by a closing parenthesis, or if it does not have an opening parenthesis, it must not have a closing parenthesis.
 - I'm still not familiar with lookaheads.
 - I will be coming back to this problem again later.
+
+## Cash Register
+
+- create a cash register drawer function
+  - purchase price (price) is the first argument
+  - payment (cash) is the second argument
+  - cash-in-drawer (cid) is the third argument
+- return `{status: "INSUFFICIENT_FUNDS", change: []}` if cid is less than the change due, or exact change is not available
+- return `{status: "CLOSED", change: [...]}` with `cid` as the value for `change` if `change` is equal to the change due
+- return `{status: "OPEN", change: [...]}` with the change due in coins and bills, sorted in highest to lowest order, as the value of the `change` key.
+
+- It's obvious that the `change due` is `cash` minus `price`
+- create an index array of objects to assign the monetary value of each coin and bill.
+- Use `for` loop `while (change >= 0)` to iterate through the index array and `cid` to determine which bill or coin should be returned as change
+- Use a series of `if` statements to distinguish the three scenarios described above.
+- I need to think about this a bit more...
