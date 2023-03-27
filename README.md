@@ -358,3 +358,50 @@ function telephoneCheck(str) {
 - Use `for` loop `while (change >= 0)` to iterate through the index array and `cid` to determine which bill or coin should be returned as change
 - Use a series of `if` statements to distinguish the three scenarios described above.
 - I need to think about this a bit more...
+
+- Trying to work this case by case.
+
+```js
+function checkCashRegister(price, cash, cid) {
+  let change = cash - price;
+  let result = {status: "", change: []};
+  console.log(change);
+  const currArr = [
+    ["ONE HUNDRED", 100],
+    ["TWENTY", 20],
+    ["TEN", 10],
+    ["FIVE", 5],
+    ["ONE", 1],
+    ["QUARTER", 0.25],
+    ["DIME", 0.10],
+    ["NICKEL", 0.05],
+    ["PENNY", 0.01]
+  ];
+
+  while (change >= 0) {
+    for (let i = 0; i < currArr.length; i++) {
+      if (change >= currArr[i][1]) {
+        change -= currArr[i][1];
+        console.log(change)
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+checkCashRegister(19.5, 20, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]);
+```
+
+- The above code is far from complete.
+- I just wanted to get it started and see what I need to do.
+- It's obvious that the change will equal to the value of `cash` minus the value of `price`.
+- `const` variable `currArr` is created to outline the value of each coin and bill.
+- `while` loop is used with a condition `change >= 0`
+- Use a `for` loop to iterate through the `currArr` array to determine which currency will be used to return the change.
+
+- but the above code does not update the `while` loop properly and is triggering a `potential infinite loop`.
+- I need to think a bit more about how to approach this.
+  - How to assign the `result {status: "", change: []}`
+  - How to keep track of how much cash is remaining in the entire `cid`
+    - Do I need another `for` loop to iterate through the `cid` array to check its balance?
