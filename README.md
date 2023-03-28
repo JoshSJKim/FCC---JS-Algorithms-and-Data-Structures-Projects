@@ -405,3 +405,87 @@ checkCashRegister(19.5, 20, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], [
   - How to assign the `result {status: "", change: []}`
   - How to keep track of how much cash is remaining in the entire `cid`
     - Do I need another `for` loop to iterate through the `cid` array to check its balance?
+
+- After some thought, I should revert the `currArr` order from smallest to largest currency.
+- I reversed it because of the `if` statement `(change >= currArr[i][1])`
+  - Since the array begins with 'PENNY', `currArr[0][1]` will always be smaller than `change'
+  - Why didn't I think about reversing the `for` loop?
+- `cid` and `currArr` should be in-line so that the index value matches for modifying the `cid` values.
+
+```js
+function checkCashRegister(price, cash, cid) {
+  let change = cash - price;
+  let result = {status: "", change: []};
+  console.log(change);
+  const currArr = [
+    ["PENNY", 0.01],
+    ["NICKEL", 0.05],
+    ["DIME", 0.10],
+    ["QUARTER", 0.25],
+    ["ONE", 1],
+    ["FIVE", 5],
+    ["TEN", 10],
+    ["TWENTY", 20],
+    ["ONE HUNDRED", 100],
+  ];
+
+  while (change >= 0) {
+    for (let i = currArr.length - 1; i >= 0; i--) {
+      if (change >= currArr[i][1]) {
+        change -= currArr[i][1];
+        console.log(change)
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+checkCashRegister(19.5, 20, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]);
+```
+
+- Instead of having to write out `currArr[i][1]` every time, it would be better to assign it as a value to a new variable
+
+```js
+function checkCashRegister(price, cash, cid) {
+  let change = cash - price;
+  let result = {status: "", change: []};
+  console.log(change);
+  const currArr = [
+    ["PENNY", 0.01],
+    ["NICKEL", 0.05],
+    ["DIME", 0.10],
+    ["QUARTER", 0.25],
+    ["ONE", 1],
+    ["FIVE", 5],
+    ["TEN", 10],
+    ["TWENTY", 20],
+    ["ONE HUNDRED", 100],
+  ];
+
+    for (let i = currArr.length - 1; i >= 0; i--) { // reverse for loop
+      let currNow = currArr[i][1];  // currency being processed
+      let cidNow = cid[i][1];       // corresponding cid currency
+      let changeAcc = [currArr[i][0], 0]; // keeping a track of change being returned
+
+    while (change >= currNow && cidNow > 0) {  // run the loop while cid has enough of the currNow value in the drawer
+
+      if (change >= currNow) { //if currNow value can be used to return the change
+        change -= currNow;    // take away value of currNow from change 
+        cidNow -= currNow;    // subtract currNow value from corresponding cid
+        changeAcc[1] += currNow;  // Add currNow value to changeAcc
+        result.change.push(changeAcc); // push changeAcc to change property in the result.
+        console.log(result)
+      }
+    }
+  }
+  return result;
+}
+
+checkCashRegister(19.5, 20, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]);
+```
+
+- It seems to work, but it's pushing `changeAcc` as separate elements rather than returning a single accumulated result.
+- I still need to figure out how to check `cid` if it has sufficient funds in order to update the status of the result.
+- Also, the code looks too complicated and unreadable.
+- More thinking tomorrow.
