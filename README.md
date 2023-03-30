@@ -444,7 +444,7 @@ function checkCashRegister(price, cash, cid) {
 checkCashRegister(19.5, 20, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]);
 ```
 
-- Instead of having to write out `currArr[i][1]` every time, it would be better to assign it as a value to a new variable
+- Instead of having to write out 'currArr[i][1]' every time, it would be better to assign it as a value to a new variable
 
 ```js
 function checkCashRegister(price, cash, cid) {
@@ -520,10 +520,10 @@ function checkCashRegister(price, cash, cid) {
     while (change >= currValue && currTotal > change) {
       change -= currValue;
       currTotal -= currValue;
-      currCount += currValue
+      currCount += currValue;
     }
     if (currCount > 0) {
-      result.change.push([currName, currCount])
+      result.change.push([currName, currCount]);
     }
   }
   return result;
@@ -547,3 +547,24 @@ function checkCashRegister(price, cash, cid) {
 
 - Based on the initial `cid` passed to the function, the above code will return `{ status: "", change: [['QUARTER', 0,5]]}`
 - Still not quite sure what to do with the `status` property.
+
+- Trying to change up some logic here.
+- If the total sum of `cid` is equal to the change due, it should return `CLOSED`, even before running the loop.
+- If the total sum of `cid` is less than the change due, it should immediately return `INSUFFICIENT_FUNDS`.
+  - But, it also needs to return `INSUFFICIENT_FUNDS` if `cid` is not able to return exact change.
+
+```js
+let cidTotal = cid.map(([_, num]) => num).reduce((acc, elem) => acc + elem, 0).toFixed(2);
+
+if (cidTotal == change) {
+  result.status = "CLOSED";
+  result.change = cid;
+}
+```
+
+- `map` is used with `destructuring assignment` to extract the numerical values of the nested arrays.
+- `reduce` is used to acquire the sum of the elements.
+- `toFixed(2)` is used to limit the decimal places by 2.
+- `if` `cidTotal` is equal to the value of `change`, return status `CLOSED` and `cid` as the value for `change` property.
+
+- I have to figure out how to make all this work together
