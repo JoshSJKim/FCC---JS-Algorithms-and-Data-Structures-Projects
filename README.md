@@ -489,3 +489,61 @@ checkCashRegister(19.5, 20, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], [
 - I still need to figure out how to check `cid` if it has sufficient funds in order to update the status of the result.
 - Also, the code looks too complicated and unreadable.
 - More thinking tomorrow.
+
+- After some thought, trial and error, I've decided to rename the variables since it was getting a bit confusing.
+- Did some shuffling around because I wasn't getting the result I wanted.
+- `result.change.push` should be outside of the `while` loop to prevent it from pushing the same currency value in separate arrays.
+
+```js
+function checkCashRegister(price, cash, cid) {
+  let change = cash - price;
+  let result = {status: "", change: []};
+  console.log(change);
+  const currArr = [
+    ["PENNY", 0.01],
+    ["NICKEL", 0.05],
+    ["DIME", 0.10],
+    ["QUARTER", 0.25],
+    ["ONE", 1],
+    ["FIVE", 5],
+    ["TEN", 10],
+    ["TWENTY", 20],
+    ["ONE HUNDRED", 100],
+  ];
+
+  for (let i = currArr.length - 1; i > 0; i--) {
+    let currName = currArr[i][0];
+    let currValue = currArr[i][1];
+    let currTotal = cid[i][1];
+    let currCount = 0;
+
+    while (change >= currValue && currTotal > change) {
+      change -= currValue;
+      currTotal -= currValue;
+      currCount += currValue
+    }
+    if (currCount > 0) {
+      result.change.push([currName, currCount])
+    }
+  }
+  return result;
+};
+```
+
+- The `for` loop will iterate through `currArr` backwards to be in line with `cid`
+- `currName` is the currency name
+- `currValue` is the currency value
+- `currTotal` is the total amount the current currency in `cid`
+- `currCount` keeps track of how much change is being returned.
+
+- `while` value of `change` is greater than or equal to the current `currValue` in iteration, AND `currTotal` in `cid` is greater than the value of `change`
+  - subtract current `currValue` from `change`
+  - subtract current `currValue` from `currTotal` in `cid`
+  - add current `currValue` to `currCount`
+  - Note that the `while` loop will terminate if non of the `currValue` in `currArr` is greater than the `change` value as it decrements.
+
+- After the `while` loop is terminated, `if` `currCount` is greater than 0, meaning, if return change value has been accrued to `currCount`
+- `push` an array of `currName` and `currCount` to the `change` property of `result'.
+
+- Based on the initial `cid` passed to the function, the above code will return `{ status: "", change: [['QUARTER', 0,5]]}`
+- Still not quite sure what to do with the `status` property.
