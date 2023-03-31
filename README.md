@@ -568,3 +568,68 @@ if (cidTotal == change) {
 - `if` `cidTotal` is equal to the value of `change`, return status `CLOSED` and `cid` as the value for `change` property.
 
 - I have to figure out how to make all this work together
+
+- I found out how to simplify the `cidTotal` function
+
+```js
+let cidTotal = cid.reduce((acc, [_, num]) => acc + num, 0);
+```
+
+- I didn't know that the value passed to `reduce` argument can be an array to access its element independently.
+
+- An attempt to put the above together
+
+```js
+function checkCashRegister(price, cash, cid) {
+  let change = cash - price;
+  let result = {status: "", change: []};
+  console.log(change);
+  const currArr = [
+    ["PENNY", 0.01],
+    ["NICKEL", 0.05],
+    ["DIME", 0.10],
+    ["QUARTER", 0.25],
+    ["ONE", 1],
+    ["FIVE", 5],
+    ["TEN", 10],
+    ["TWENTY", 20],
+    ["ONE HUNDRED", 100],
+  ];
+
+  let cidTotal = cid.reduce((acc, [_, num]) => acc + num, 0).toFixed(2);
+
+  if (change > cidTotal) {
+    result.status = "INSUFFICIENT_FUNDS";
+    result.change = [];
+    return result;
+  } else if (cidTotal == change) {
+    result.status = "CLOSED";
+    result.change = cid;
+    return result;
+  };
+
+  for (let i = currArr.length - 1; i >= 0; i--) {
+    let currName = currArr[i][0];
+    let currValue = currArr[i][1];
+    let currTotal = cid[i][1];
+    let currCount = 0;
+  
+
+  while (change >= currValue && currTotal >= currValue) {
+    change -= currValue;
+    currTotal -= currValue;
+    currCount += currValue;
+    }
+    if (currCount > 0) {
+      result.status = "OPEN";
+      result.change.push([currName, currCount]);
+    }
+  }
+  return result;
+}
+```
+
+- still need to figure out how to return 'status: "INSUFFICIENT_FUNDS", change: [];` when exact change cannot be returned.
+  - I tried `else if (change % currValue !== 0)`, but this won't work because 'PENNY' will always return 0
+  - I need to figure out a different condition
+- Also, it's not iterating to the last penny if multiple currency arrays are pushed to `result.change`
