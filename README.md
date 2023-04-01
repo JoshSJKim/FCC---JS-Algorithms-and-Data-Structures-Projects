@@ -695,7 +695,7 @@ function checkCashRegister(price, cash, cid) {
     let currTotal = cid[i][1];
     let currCount = 0;
 
-    while (change >= currValue && currTotal >= currValue) {
+    while (change >= currValue && currTotal >= currValue && currTotal >= change) {
       change -= currValue;
       currTotal -= currValue;
       currCount += currValue;
@@ -716,3 +716,6 @@ function checkCashRegister(price, cash, cid) {
 
 console.log(checkCashRegister(3.26, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]));
 ```
+
+- I have a feeling that it has something to do with the condition defined in the `while` loop.
+- I have to think through the logic of the code from the top and see what's causing the error.
