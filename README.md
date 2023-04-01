@@ -655,3 +655,64 @@ function checkCashRegister(price, cash, cid) {
 - I still need to figure out why the for loop doesn't iterate to the very end if there are multiple currency arrays pushed to result.
 - But I just noticed that applying the code above is returning some unexpected results for `status: "OPEN"`
 - It's not pushing all of the necessary currency arrays to result.
+
+- The following is the latest version of the code.
+- It still returns "INSUFFICIENT_FUNDS" for cases where multiple currency arrays need to be pushed to `result`
+
+```js
+function checkCashRegister(price, cash, cid) {
+ let change = (cash - price).toFixed(2);
+ let result = {status: "", change: []};
+  console.log(change);
+  const currArr = [
+    ["PENNY", 0.01],
+    ["NICKEL", 0.05],
+    ["DIME", 0.10],
+    ["QUARTER", 0.25],
+    ["ONE", 1],
+    ["FIVE", 5],
+    ["TEN", 10],
+    ["TWENTY", 20],
+    ["ONE HUNDRED", 100],
+  ];
+
+  let cidTotal = cid.reduce((acc, [_, num]) => acc + num, 0).toFixed(2);
+  console.log(cidTotal);
+
+  if (change > cidTotal) {
+    result.status = "INSUFFICIENT_FUNDS";
+    result.change = [];
+    return result;
+  } else if (change == cidTotal) {
+    result.status = "CLOSED";
+    result.change = cid;
+    return result;
+  };
+
+  for (let i = currArr.length-1; i>=0; i--) {
+    let currName = currArr[i][0];
+    let currValue = currArr[i][1];
+    let currTotal = cid[i][1];
+    let currCount = 0;
+
+    while (change >= currValue && currTotal >= currValue) {
+      change -= currValue;
+      currTotal -= currValue;
+      currCount += currValue;
+    }
+    if (currCount > 0) {
+      result.status = "OPEN";
+      result.change.push([currName, currCount]);
+    }
+  };
+    
+  if (change > 0) {
+      result.status = "INSUFFICIENT_FUNDS";
+      result.change = [];  
+  }
+
+  return result;
+}
+
+console.log(checkCashRegister(3.26, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]));
+```
