@@ -633,3 +633,25 @@ function checkCashRegister(price, cash, cid) {
   - I tried `else if (change % currValue !== 0)`, but this won't work because 'PENNY' will always return 0
   - I need to figure out a different condition
 - Also, it's not iterating to the last penny if multiple currency arrays are pushed to `result.change`
+
+- Tried `else if (change > currCount)` by the end of the for loop, return "INSUFFICIENT_FUNDS"
+- But that didn't work.
+- Got rid of the `else` and put a separate `if` statement and it works.
+
+```js
+    if (currCount > 0) {
+      result.status = "OPEN";
+      result.change.push([currName, currCount]);
+    }
+    if (change > currCount) {
+      result.status = "INSUFFICIENT_FUNDS";
+      result.change = [];
+    }
+  }
+  return result;
+}
+```
+
+- I still need to figure out why the for loop doesn't iterate to the very end if there are multiple currency arrays pushed to result.
+- But I just noticed that applying the code above is returning some unexpected results for `status: "OPEN"`
+- It's not pushing all of the necessary currency arrays to result.
