@@ -719,3 +719,119 @@ console.log(checkCashRegister(3.26, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["D
 
 - I have a feeling that it has something to do with the condition defined in the `while` loop.
 - I have to think through the logic of the code from the top and see what's causing the error.
+
+- The problem had to do with working with floating point values.
+- Using `.toFixed(2)` converts the value to a string, so it's bound to cause errors somewhere along the code.
+  - I was actually surprised that it wasn't throwing any errors.
+- I tried to debug the code by using `console.log` at various parts of the code but the console would not display anything.
+  - The code above with the arguments passed should logically return the correct result.
+  - but since the console would not display anything, and return "INSUFFICIENT FUNDS", it meant that the loop was not being executed at all.
+- I think I tried everything with the `while` loop condition. Nothing worked.
+- Then I had a notion that it wasn't calculating properly due to floating point values.
+- So, work with integers instead.
+
+```js
+function checkCashRegister(price, cash, cid) {
+  let change = (cash - price) * 100;
+  let result = { status: "", change: []};
+  const currArr = [
+    ["PENNY", 1],
+    ["NICKEL", 5],
+    ["DIME", 10],
+    ["QUARTER", 25],
+    ["ONE", 100],
+    ["FIVE", 500],
+    ["TEN", 1000],
+    ["TWENTY", 2000],
+    ["ONE HUNDRED", 10000]
+  ];
+
+  let cidTotal = cid.reduce((acc, [_, num]) => acc + num, 0) * 100;
+
+  if (change > cidTotal) {
+    result.status = "INSUFFICIENT_FUNDS";
+    result.change = [];
+    return result;
+  } else if (change == cidTotal) {
+    result.status = "CLOSED";
+    result.change = cid;
+    return result;
+  };
+
+  for (let i = currArr.length - 1; i >= 0; i--) {
+    let currName = currArr[i][0];
+    let currValue = currArr [i][1];
+    let currTotal = cid[i][1] * 100;
+    let currCount = 0;
+    
+    while (change >= currValue && currTotal >= currValue) {
+      change -= currValue;
+      currTotal -= currValue;
+      currCount += currValue;
+    }
+
+    if (currCount > 0) {
+      result.status = "OPEN";
+      result.change.push([currName, currCount/100]);
+    }
+  };  
+  if (change > 0) {
+    result.status = "INSUFFICIENT_FUNDS";
+    result.change = [];
+  };
+  return result;
+}
+```
+
+- Let's go through this.
+
+SETUP
+
+- function `checkCashRegister` receives three arguments - price, cash, cid.
+- initialize variable `change` and assign the value of subtracting price from cash, and multiply it by 100 to work with whole numbers
+- declare `result` variable with the appropriate return format.
+- create an array `currArr` with nested arrays of the currency denominations, each multiplied by a 100 to work with whole numbers.
+
+- calculate the total amount of cash (`cidTotal`) in `cid` by using `reduce` method. Multiply the value by a 100 to work with whole numbers.
+
+- `if` the value of `change` is greater than `cidTotal`, there is not enough cash in the drawer to return the change.
+  - immediately return result `{ status: "INSUFFICIENT_FUNDS", change: []}`
+- `if` the value of `change` is equal to the value of `cidTotal`, `cid` is empty after returning the change.
+  - immediately return result `{ status: "CLOSED", change: []}`
+
+Enter loops
+
+- Use `for` loop to iterate through `currArr` in reverse order from largest denomination to smallest.
+  - reverse loop will also ensure that the index values coincide between `currArr` and `cid`.
+- Declare variables
+  - currName : currency name
+  - currValue : monetary value of the currency
+  - currTotal : total amount of current currency in `cid`
+  - currCount : initiate at 0 to keep track of change being returned
+
+- Use `while` loop to set the loop conditions
+  - execute the loop while
+    - value of `change` is greater than or equal to `currValue`
+      - This will identify the currency suitable to make change
+      - It will also ensure that the loop terminates when the initial `change` value has reached 0
+    - value of `currTotal` is greater than or equal to `currValue`
+      - This will ensure that the current currency in `cid` is available to make change
+
+- While the above two conditions are true,
+  - subtract `currValue` from `change`
+  - subtract `currValue` from `currTotal`
+  - add `currValue` to `currCount`
+- if `currCount > 0`, in other words, if `currCount` has incremented successfully,
+  - `result.status` is "OPEN"
+  - push [currName, currCount/100] to `result.change`.
+
+- Repeat above process while the conditions are true.
+
+- After the `for` loop is done iteration, `if` change is still greater than 0, in other words, there is still change due.
+  - In this case, it means that even if the total amount of cash in drawer is greater than the change due, appropriate currency denominations are not available in the drawer to provide exact change
+  - Therefore, result = `{ status: "INSUFFICIENT_FUNDS", change: []}`
+
+- All loops are completed. Return result.
+
+- I'm sure there are many other EFFICIENT ways to go about this.
+- I will come back to this again later, after some more learning and studying.
