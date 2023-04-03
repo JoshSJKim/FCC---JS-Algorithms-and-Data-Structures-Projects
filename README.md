@@ -835,3 +835,64 @@ Enter loops
 
 - I'm sure there are many other EFFICIENT ways to go about this.
 - I will come back to this again later, after some more learning and studying.
+
+- while I'm comfortable working on algorithms on my own, I have to keep in mind that the code should be readable and understandable by peers. 
+- Although I understand what all the variables are referring to, it may not be so clear for others. 
+- name the variables so that it's somewhat self-explanatory.
+- if there is a lengthy operation, or there are multiple identical operations throughout the code, assign it to a variable. 
+- use variables as "comments" throughout the code
+
+```js
+function checkCashRegister(price, cash, cid) {
+  let changeDue = (cash - price) * 100;
+  let result = { status: "", change: []};
+  const CURRENCIES = [
+    ["PENNY", 1],
+    ["NICKEL", 5],
+    ["DIME", 10],
+    ["QUARTER", 25],
+    ["ONE", 100],
+    ["FIVE", 500],
+    ["TEN", 1000],
+    ["TWENTY", 2000],
+    ["ONE HUNDRED", 10000]
+  ];
+
+  let cidTotal = cid.reduce((acc, [_, num]) => acc + num, 0) * 100;
+
+  if (changeDue > cidTotal) {
+    result.status = "INSUFFICIENT_FUNDS";
+    result.change = [];
+    return result;
+  } else if (changeDue == cidTotal) {
+    result.status = "CLOSED";
+    result.change = cid;
+    return result;
+  };
+
+  for (let i = CURRENCIES.length - 1; i >= 0; i--) {
+    const [currencyName, currencyValue] = CURRENCIES[i];
+    const cidDenominationTotal = cid[i][1] * 100;
+    let changeToBeReturned = 0;
+    
+    while (changeDue >= currencyValue && cidDenominationTotal >= currencyValue) {
+      changeDue -= currencyValue;
+      cidDenominationTotal -= currencyValue;
+      changeToBeReturned += currencyValue;
+    }
+
+    if (changeToBeReturned > 0) {
+      result.status = "OPEN";
+      result.change.push([currencyName, changeToBeReturned/100]);
+    }
+  };  
+  if (changeDue > 0) {
+    result.status = "INSUFFICIENT_FUNDS";
+    result.change = [];
+  };
+  return result;
+}
+```
+
+- Remember to use 'const' for variables, except for cases where you want to update the variable value, for which cases you would use 'let'
+
